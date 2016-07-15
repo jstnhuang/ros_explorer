@@ -1,0 +1,74 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<dom-module id="rose-name-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      h1 {
+        @apply(--paper-font-title);
+        margin-top: 0;
+      }
+      paper-material {
+        padding: 10px;
+        overflow-x: auto;
+        overflow-y: auto;
+      }
+    </style>
+    <paper-material>
+      <h1>
+        [[title]]
+        <template is="dom-if" if="[[!isLoading]]">
+          ([[items.length]])
+        </template>
+      </h1>
+      <template is="dom-if" if="[[isLoading]]">
+        Loading...
+      </template>
+      <template is="dom-if" if="[[!isLoading]]">
+        <template is="dom-repeat" items="[[items]]">
+        <a href="{{_computeUrl(urlPrefix, item)}}" />[[item]]</a><br />
+        </template>
+      </template>
+    </paper-material> 
+  </template>
+
+  <script>
+    Polymer({
+      is: 'rose-name-list',
+
+      properties: {
+        isLoading: {
+          type: Boolean,
+          value: true,
+        },
+        items: {
+          type: Array,
+          value: function() {
+            return [];
+          },
+        },
+        title: {
+          type: String,
+          value: "",
+        },
+        urlPrefix: {
+          type: String,
+          value: "",
+        },
+      },
+
+      _computeUrl: function(urlPrefix, item) {
+        while (urlPrefix.endsWith('/')) {
+          urlPrefix = urlPrefix.slice(0, -1);
+        }
+        while (item.startsWith('/')) {
+          item = item.substring(1);
+        }
+        return urlPrefix + '/' + item;
+      },
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,47 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../rose-name-list/rose-name-list.html">
+
+<dom-module id="rose-topic-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <rose-name-list
+      is-loading="[[isLoading]]"
+      items="[[topics]]"
+      title="Topics"
+      url-prefix="topic"
+    ></rose-name-list>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'rose-topic-list',
+
+      properties: {
+        isLoading: {
+          type: Boolean,
+          value: true,
+        },
+        ros: Object,
+        topics: {
+          type: Array,
+          value: function() {
+            return ['/head_mount_kinect/depth_registered/points', 'b'];
+          },
+        },
+      },
+
+      // ROS is assumed to be initialized.
+      update: function() {
+        var that = this;
+        this.ros.getTopics(function(topics) {
+          that.isLoading = false;
+          that.topics = topics.sort();
+        });
+      },
+    });
+  </script>
+</dom-module>

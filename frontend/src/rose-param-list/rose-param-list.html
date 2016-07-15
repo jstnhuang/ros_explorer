@@ -1,0 +1,48 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../rose-name-list/rose-name-list.html">
+
+<dom-module id="rose-param-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <rose-name-list
+      is-loading="[[isLoading]]"
+      items="[[params]]"
+      title="Parameters"
+      url-prefix="param"
+    ></rose-name-list>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'rose-param-list',
+
+      properties: {
+        isLoading: {
+          type: Boolean,
+          value: true,
+        },
+        params: {
+          type: Array,
+          value: function() {
+            return [];
+          },
+        },
+        ros: Object,
+      },
+
+      // ROS is assumed to be initialized.
+      update: function() {
+        var that = this;
+        this.ros.getParams(function(params) {
+          that.isLoading = false;
+          that.params = params.sort();
+        });
+      },
+
+    });
+  </script>
+</dom-module>

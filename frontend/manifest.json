@@ -1,0 +1,7 @@
+{
+  "name": "rose",
+  "short_name": "rose",
+  "description": "A web interface for exploring the ROS graph.",
+  "start_url": "/",
+  "display": "standalone"
+}

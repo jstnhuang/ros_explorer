@@ -1,0 +1,47 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../rose-name-list/rose-name-list.html">
+
+<dom-module id="rose-service-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <rose-name-list
+      is-loading="[[isLoading]]"
+      items="[[services]]"
+      title="Services"
+      url-prefix="service"
+    ></rose-name-list>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'rose-service-list',
+
+      properties: {
+        isLoading: {
+          type: Boolean,
+          value: true,
+        },
+        ros: Object,
+        services: {
+          type: Array,
+          value: function() {
+            return [];
+          },
+        },
+      },
+
+      // ROS is assumed to be initialized.
+      update: function() {
+        var that = this;
+        this.ros.getServices(function(services) {
+          that.isLoading = false;
+          that.services = services.sort();
+        });
+      },
+    });
+  </script>
+</dom-module>
