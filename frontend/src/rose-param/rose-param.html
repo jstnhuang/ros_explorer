@@ -1,0 +1,22 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="rose-param">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h1>{{name}}</h1> 
+  </template>
+
+  <script>
+    Polymer({
+      is: 'rose-param',
+
+      properties: {
+        name: String,
+      },
+    });
+  </script>
+</dom-module>

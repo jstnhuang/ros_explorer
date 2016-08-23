@@ -1,14 +1,18 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../../bower_components/ros-websocket/ros-websocket.html">
-<link rel="import" href="../rose-node-list/rose-node-list.html">
-<link rel="import" href="../rose-topic-list/rose-topic-list.html">
-<link rel="import" href="../rose-service-list/rose-service-list.html">
-<link rel="import" href="../rose-param-list/rose-param-list.html">
+<link rel="import" href="../rose-dashboard/rose-dashboard.html">
+<link rel="import" href="../rose-node/rose-node.html">
+<link rel="import" href="../rose-topic/rose-topic.html">
+<link rel="import" href="../rose-service/rose-service.html">
+<link rel="import" href="../rose-param/rose-param.html">
 
 <dom-module id="rose-app">
   <template>
@@ -17,20 +21,13 @@
         display: block;
         @apply(--paper-font-common-base);
         padding: 10px;
+        padding-top: 0;
       }
       .code {
         @apply(--paper-font-common-code);
       }
       paper-dialog {
         max-width: 700px;
-      }
-      rose-node-list, rose-topic-list, rose-service-list {
-        margin-right: 10px;
-      }
-      rose-node-list, rose-topic-list, rose-service-list, rose-param-list {
-        margin-bottom: 10px;
-        min-width: 200px;
-        max-width: 500px;
       }
       #urlInput {
         margin-bottom: 10px;
@@ -50,6 +47,13 @@
       }
     </style>
     <style include="iron-flex"></style>
+    <app-location route="{{route}}"></app-location>
+    <app-route
+      data="{{routeData}}"
+      pattern="/:page"
+      route="{{route}}"
+      tail="{{routeTail}}"
+    ></app-route>
     <ros-websocket
       id="websocket"
       url="{{url}}" 
@@ -62,12 +66,23 @@
       <paper-input class="flex" label="Websocket URL" value="{{url}}"></paper-input>
       <paper-button on-tap="connect">Connect</paper-button>
     </div>
-    <div class="layout horizontal wrap"> 
-      <rose-node-list class="flex" id="nodes" ros="{{ros}}"></rose-node-list>
-      <rose-topic-list class="flex" id="topics" ros="{{ros}}"></rose-topic-list>
-      <rose-service-list class="flex" id="services" ros="{{ros}}"></rose-service-list>
-      <rose-param-list class="flex" id="params" ros="{{ros}}"></rose-param-list>
-    </div>
+    <iron-pages attr-for-selected="data-route" selected="{{routeData.page}}">
+      <section data-route="">
+        <rose-dashboard id="dashboard" ros="{{ros}}"></rose-dashboard>
+      </section>
+      <section data-route="node">
+        <rose-node name="{{routeTail.path}}"></rose-node>
+      </section>
+      <section data-route="topic">
+        <rose-topic name="{{routeTail.path}}"></rose-topic>
+      </section>
+      <section data-route="service">
+        <rose-service name="{{routeTail.path}}"></rose-service>
+      </section>
+      <section data-route="param">
+        <rose-param name="{{routeTail.path}}"></rose-param>
+      </section>
+    </iron-pages>
     <paper-dialog modal id="disconnected">
       <h2>Disconnected from websocket server</h2>
       <p>
@@ -116,10 +131,7 @@
 
       _rosConnected: function() {
         console.log('Connected to websocket server.');
-        this.$.nodes.update();
-        this.$.topics.update();
-        this.$.services.update();
-        this.$.params.update();
+        this.$.dashboard.rosConnected();
         var that = this;
         this.debounce('updateDisconnected', function() {that.$.disconnected.close}, 1000);
       },

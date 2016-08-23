@@ -1,0 +1,52 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../rose-node-list/rose-node-list.html">
+<link rel="import" href="../rose-topic-list/rose-topic-list.html">
+<link rel="import" href="../rose-service-list/rose-service-list.html">
+<link rel="import" href="../rose-param-list/rose-param-list.html">
+
+<dom-module id="rose-dashboard">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      rose-node-list, rose-topic-list, rose-service-list {
+        margin-right: 10px;
+      }
+      rose-node-list, rose-topic-list, rose-service-list, rose-param-list {
+        margin-bottom: 10px;
+        min-width: 200px;
+        max-width: 500px;
+      }
+
+    </style>
+    <style include="iron-flex"></style>
+    <div class="layout horizontal wrap"> 
+      <rose-node-list class="flex" id="nodes" ros="{{ros}}"></rose-node-list>
+      <rose-topic-list class="flex" id="topics" ros="{{ros}}"></rose-topic-list>
+      <rose-service-list class="flex" id="services" ros="{{ros}}"></rose-service-list>
+      <rose-param-list class="flex" id="params" ros="{{ros}}"></rose-param-list>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'rose-dashboard',
+
+      properties: {
+        ros: {
+          type: Object,
+          default: null,
+        }
+      },
+
+      rosConnected: function() {
+        this.$.nodes.update();
+        this.$.topics.update();
+        this.$.services.update();
+        this.$.params.update();
+      },
+    });
+  </script>
+</dom-module>
