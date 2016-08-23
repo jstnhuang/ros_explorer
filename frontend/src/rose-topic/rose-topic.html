@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/ros-service/ros-service.html">
 
 <dom-module id="rose-topic">
   <template>
@@ -7,7 +8,18 @@
         display: block;
       }
     </style>
+    <ros-service
+      auto
+      id="topicTypeService"
+      ros="{{ros}}"
+      last-response="{{type}}"
+      on-fail="handleError"
+      name="/rosapi/topic_type"
+      ros="{{ros}}"
+      service-type="rosapi/TopicType"
+    ></ros-service>
     <h1>{{name}}</h1> 
+    Type: {{type.type}}
   </template>
 
   <script>
@@ -16,6 +28,14 @@
 
       properties: {
         name: String,
+      },
+
+      rosConnected: function() {
+        this.$.topicTypeService.call({topic: this.name});
+      },
+
+      _handleError: function(evt) {
+        console.error(evt);
       },
     });
   </script>

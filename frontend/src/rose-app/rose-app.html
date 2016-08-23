@@ -71,16 +71,16 @@
         <rose-dashboard id="dashboard" ros="{{ros}}"></rose-dashboard>
       </section>
       <section data-route="node">
-        <rose-node name="{{routeTail.path}}"></rose-node>
+        <rose-node id="nodePage" name="{{routeTail.path}}" ros="{{ros}}"></rose-node>
       </section>
       <section data-route="topic">
-        <rose-topic name="{{routeTail.path}}"></rose-topic>
+        <rose-topic id="topicPage" name="{{routeTail.path}}" ros="{{ros}}"></rose-topic>
       </section>
       <section data-route="service">
-        <rose-service name="{{routeTail.path}}"></rose-service>
+        <rose-service id="servicePage" name="{{routeTail.path}}" ros="{{ros}}"></rose-service>
       </section>
       <section data-route="param">
-        <rose-param name="{{routeTail.path}}"></rose-param>
+        <rose-param id="paramPage" name="{{routeTail.path}}" ros="{{ros}}"></rose-param>
       </section>
     </iron-pages>
     <paper-dialog modal id="disconnected">
@@ -132,6 +132,10 @@
       _rosConnected: function() {
         console.log('Connected to websocket server.');
         this.$.dashboard.rosConnected();
+        //this.$.nodePage.rosConnected();
+        this.$.topicPage.rosConnected();
+        //this.$.servicePage.rosConnected();
+        //this.$.paramPage.rosConnected();
         var that = this;
         this.debounce('updateDisconnected', function() {that.$.disconnected.close}, 1000);
       },
