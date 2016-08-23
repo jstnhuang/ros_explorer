@@ -27,16 +27,25 @@
       is: 'rose-topic',
 
       properties: {
-        name: String,
+        name: {
+          type: String,
+          observer: '_update',
+        },
       },
 
       rosConnected: function() {
-        this.$.topicTypeService.call({topic: this.name});
+        this._update();
       },
 
       _handleError: function(evt) {
         console.error(evt);
       },
+
+      _update: function() {
+        if (this.name && this.ros && this.ros.isConnected) {
+          this.$.topicTypeService.call({topic: this.name});
+        }
+      }
     });
   </script>
 </dom-module>
