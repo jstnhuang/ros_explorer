@@ -1,4 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/ros-service/ros-service.html">
+<link rel="import" href="../rose-name-list/rose-name-list.html">
 
 <dom-module id="rose-node">
   <template>
@@ -6,8 +10,50 @@
       :host {
         display: block;
       }
+      rose-name-list {
+        margin-bottom: 10px;
+        min-width: 200px;
+        max-width: 500px;
+      }
+      rose-name-list + rose-name-list {
+        margin-left: 10px;
+      }
     </style>
-    <h1>{{name}}</h1> 
+    <style include="iron-flex"></style>
+    <ros-service
+      auto
+      id="detailService"
+      on-fail="_handleDetailError"
+      on-response="_handleDetailResponse"
+      last-response="{{_detailResponse}}"
+      name="/rosapi/node_details"
+      ros="{{ros}}"
+      service-type="rosapi/NodeDetails"
+    ></ros-service>
+    <h2>{{name}}</h1> 
+    <div class="layout horizontal wrap">
+      <rose-name-list class="flex"
+        is-loading="[[isLoading]]"
+        items="[[_detailResponse.subscribing]]"
+        ros="{{ros}}"
+        title="Subscribes to"
+        url-prefix="/topic"
+      ></rose-name-list>
+      <rose-name-list class="flex"
+        is-loading="[[isLoading]]"
+        items="[[_detailResponse.publishing]]"
+        ros="{{ros}}"
+        title="Publishes to"
+        url-prefix="/topic"
+      ></rose-name-list>
+      <rose-name-list class="flex"
+        is-loading="[[isLoading]]"
+        items="[[_detailResponse.services]]"
+        ros="{{ros}}"
+        title="Services"
+        url-prefix="/service"
+      ></rose-name-list>
+    </div>
   </template>
 
   <script>
@@ -15,10 +61,38 @@
       is: 'rose-node',
 
       properties: {
-        name: String,
-        type: String,
+        _detailResponse: Object,
+        isLoading: Boolean,
+        name: {
+          type: String,
+          observer: '_nameChanged',
+        },
         ros: Object,
       },
+
+      _handleDetailError: function() {
+        console.error('Error getting details for', name);
+      },
+
+      _handleDetailResponse: function(response) {
+        this.isLoading = false;
+      },
+
+      _nameChanged: function(name) {
+        this._update();
+      },
+
+      _update: function() {
+        if (this.name && this.ros && this.ros.isConnected) {
+          this.isLoading = true;
+          this.$.detailService.request = { node: this.name };
+        }
+      },
+
+      rosConnected: function() {
+        this._update();
+      },
+
     });
   </script>
 </dom-module>
