@@ -23,10 +23,10 @@
     <ros-service
       auto
       id="detailService"
-      on-fail="_handleDetailError"
-      on-response="_handleDetailResponse"
       last-response="{{_detailResponse}}"
       name="/rosapi/node_details"
+      on-fail="_handleDetailError"
+      on-response="_handleDetailResponse"
       ros="{{ros}}"
       service-type="rosapi/NodeDetails"
     ></ros-service>
