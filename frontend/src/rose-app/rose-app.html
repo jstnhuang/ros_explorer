@@ -62,6 +62,8 @@
       on-connection="_rosConnected"
       ros="{{ros}}"
     ></ros-websocket>
+
+    <a href="/" hidden="[[!showBackButton]]">&larr; Back to dashboard</a>
     <div id="urlInput" class="layout horizontal">
       <paper-input class="flex" label="Websocket URL" value="{{url}}"></paper-input>
       <paper-button on-tap="connect">Connect</paper-button>
@@ -113,6 +115,11 @@
           },
         },
         ros: Object,
+        showBackButton: {
+          type: Boolean,
+          value: false,
+          computed: '_computeShowBackButton(routeData.page)',
+        },
       },
 
       ready: function() {
@@ -121,6 +128,14 @@
 
       connect: function() {
         this.$.websocket.connect();
+      },
+
+      _computeShowBackButton: function(page) {
+        if (!page) {
+          return false;
+        } else {
+          return true;
+        }
       },
 
       _rosClosed: function() {
@@ -132,7 +147,7 @@
       _rosConnected: function() {
         console.log('Connected to websocket server.');
         this.$.dashboard.rosConnected();
-        //this.$.nodePage.rosConnected();
+        this.$.nodePage.rosConnected();
         this.$.topicPage.rosConnected();
         //this.$.servicePage.rosConnected();
         //this.$.paramPage.rosConnected();
