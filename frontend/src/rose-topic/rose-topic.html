@@ -1,5 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/ros-service/ros-service.html">
+<link rel="import" href="../rose-msg/rose-msg.html">
 
 <dom-module id="rose-topic">
   <template>
@@ -7,19 +10,88 @@
       :host {
         display: block;
       }
+      paper-material {
+        padding: 10px;
+        overflow-x: auto;
+        overflow-y: auto;
+        margin-right: 10px;
+      }
+      paper-material h1 {
+        @apply(--paper-font-title);
+        margin-top: 0;
+      }
+      rose-name-list, paper-material {
+        margin-bottom: 10px;
+        min-width: 200px;
+        max-width: 500px;
+      }
+      rose-name-list + rose-name-list {
+        margin-left: 10px;
+      }
     </style>
-    <ros-service
-      auto
-      id="topicTypeService"
-      ros="{{ros}}"
+    <style include="iron-flex"></style>
+    <ros-service auto id="topicTypeService"
       last-response="{{type}}"
-      on-fail="handleError"
       name="/rosapi/topic_type"
+      on-fail="_handleTypeError"
+      on-response="_handleTypeResponse"
       ros="{{ros}}"
       service-type="rosapi/TopicType"
     ></ros-service>
+    <ros-service auto id="msgDetailService"
+      last-response="{{msgDetails}}"
+      name="/rosapi/message_details"
+      on-fail="_handleDetailError"
+      on-response="_handleDetailResponse"
+      ros="{{ros}}"
+      service-type="rosapi/MessageDetails"
+    ></ros-service>
+    <ros-service auto id="publishers"
+      last-response="{{publishers}}"
+      name="/rosapi/publishers"
+      on-response="_handlePublishersResponse"
+      ros="{{ros}}"
+      service-type="rosapi/Publishers"
+    ></ros-service>
+    <ros-service auto id="subscribers"
+      last-response="{{subscribers}}"
+      name="/rosapi/subscribers"
+      on-response="_handleSubscribersResponse"
+      ros="{{ros}}"
+      service-type="rosapi/Subscribers"
+    ></ros-service>
+		<ros-topic id="topic"
+      on-message="_handleMessage"
+      topic="[[name]]"
+      ros="{{ros}}"
+      msg-type="{{type.type}}"
+    ></ros-topic>
     <h1>{{name}}</h1> 
-    Type: {{type.type}}
+    <div class="layout horizontal wrap">
+      <paper-material>
+        <h1>Type definition</h1>
+        <rose-msg
+          name=""
+          type="{{type.type}}"
+          arraylen="-1"
+          typedefs="{{typedefs}}"
+        ></rose-msg>
+      </paper-material>
+      <rose-name-list class="flex"
+        is-loading="[[_publishersLoading]]"
+        items="[[publishers.publishers]]"
+        ros="{{ros}}"
+        title="Publishers"
+        url-prefix="/node"
+      ></rose-name-list>
+      <rose-name-list class="flex"
+        is-loading="[[_subscribersLoading]]"
+        items="[[subscribers.subscribers]]"
+        ros="{{ros}}"
+        title="Subscribers"
+        url-prefix="/node"
+      ></rose-name-list>
+    </div>
   </template>
 
   <script>
@@ -27,18 +99,88 @@
       is: 'rose-topic',
 
       properties: {
+        msgType: {
+          type: String,
+        },
         name: {
           type: String,
           observer: '_update',
         },
+        publishers: {
+          type: Array,
+          value: function() {
+            return [];
+          },
+        },
+        subscribers: {
+          type: Array,
+          value: function() {
+            return [];
+          },
+        },
+        typedefs: {
+          type: Array,
+          value: function() {
+            return [];
+          },
+        },
+        isRosConnected: {
+          type: Boolean,
+          value: false,
+        },
+        _publishersLoading: Boolean,
+        _subscribersLoading: Boolean
+      },
+
+      observers: [
+        '_getPublishers(isRosConnected, name)',
+        '_getSubscribers(isRosConnected, name)',
+      ],
+
+      ready: function() {
       },
 
       rosConnected: function() {
+        this.isRosConnected = true;
         this._update();
       },
 
-      _handleError: function(evt) {
+      _getPublishers: function(isRosConnected, name) {
+        if (isRosConnected && name) {
+          this._publishersLoading = true;
+          this.$.publishers.request = { topic: name };
+        }
+      },
+
+      _getSubscribers: function(isRosConnected, name) {
+        if (isRosConnected && name) {
+          this._subscribersLoading = true;
+          this.$.subscribers.request = { topic: name };
+        }
+      },
+
+      _handlePublishersResponse: function() {
+        this._publishersLoading = false;
+      },
+
+      _handleSubscribersResponse: function() {
+        this._subscribersLoading = false;
+      },
+
+      _handleTypeError: function(evt) {
         console.error(evt);
+      },
+
+      _handleTypeResponse: function(evt) {
+        this.msgType = evt.detail.type;
+        this.$.msgDetailService.call({type: this.msgType}); 
+      },
+
+      _handleDetailError: function() {
+      },
+
+      _handleDetailResponse: function(evt) {
+        this.typedefs = evt.detail.typedefs;
       },
 
       _update: function() {
