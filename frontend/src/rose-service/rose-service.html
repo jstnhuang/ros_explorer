@@ -131,13 +131,13 @@
       },
 
       _getRequestDetails: function(type) {
-        if (this.type) {
+        if (this.type && this.type.type) {
           this.$.requestDetailsService.call({type: this.type.type});
         }
       },
 
       _getResponseDetails: function(type) {
-        if (this.type) {
+        if (this.type && this.type.type) {
           this.$.responseDetailsService.call({type: this.type.type});
         }
       },
