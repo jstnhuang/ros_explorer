@@ -37,21 +37,21 @@
         items="[[_detailResponse.subscribing]]"
         ros="{{ros}}"
         title="Subscribes to"
-        url-prefix="/topic"
+        url-prefix="#/topic"
       ></rose-name-list>
       <rose-name-list class="flex"
         is-loading="[[isLoading]]"
         items="[[_detailResponse.publishing]]"
         ros="{{ros}}"
         title="Publishes to"
-        url-prefix="/topic"
+        url-prefix="#/topic"
       ></rose-name-list>
       <rose-name-list class="flex"
         is-loading="[[isLoading]]"
         items="[[_detailResponse.services]]"
         ros="{{ros}}"
         title="Services"
-        url-prefix="/service"
+        url-prefix="#/service"
       ></rose-name-list>
     </div>
   </template>
