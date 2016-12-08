@@ -23,6 +23,10 @@
         padding: 10px;
         padding-top: 0;
       }
+      a.back {
+        margin-top: 8px;
+        display: block;
+      }
       .code {
         @apply(--paper-font-common-code);
       }
@@ -63,7 +67,7 @@
       ros="{{ros}}"
     ></ros-websocket>
 
-    <a href="#/" hidden="[[!showBackButton]]">&larr; Back to dashboard</a>
+    <a href="#/" class="back" hidden="[[!showBackButton]]">&larr; Back to dashboard</a>
     <div id="urlInput" class="layout horizontal">
       <paper-input class="flex" label="Websocket URL" value="{{url}}"></paper-input>
       <paper-button on-tap="connect">Connect</paper-button>
