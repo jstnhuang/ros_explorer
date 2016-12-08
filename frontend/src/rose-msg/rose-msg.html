@@ -18,12 +18,7 @@
         padding-left: 20px;
       }
     </style>
-    <div hidden$="{{!_hasChildren(childFields.length)}}">
-      <a href="/message/{{type}}">{{type}}</a><span hidden$="{{!_isArrayType(arraylen)}}">[]</span> {{name}}<br />
-    </div>
-    <div hidden$="{{_hasChildren(childFields.length)}}">
-      {{type}}<span hidden$="{{!_isArrayType(arraylen)}}">[]</span> {{name}}<br />
-    </div>
+    {{type}}<span hidden$="{{!_isArrayType(arraylen)}}">[]</span> {{name}}<br />
     <div class="children">
       <template is="dom-repeat" items="{{childFields}}">
         <rose-msg
