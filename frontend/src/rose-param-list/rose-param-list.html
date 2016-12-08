@@ -1,4 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/ros-service/ros-service.html">
 <link rel="import" href="../rose-name-list/rose-name-list.html">
 
 <dom-module id="rose-param-list">
@@ -7,13 +11,73 @@
       :host {
         display: block;
       }
+      h1 {
+        @apply(--paper-font-title);
+        margin-top: 0;
+      }
+      paper-button.create {
+        @apply(--paper-font-button);
+        background-color: #e0e0e0;
+        height: 30px;
+        margin-left: 0px;
+        margin-bottom: 10px;
+      }
+      .create:hover {
+        background-color: #bdbdbd;
+      }
+      paper-dialog li {
+        margin-left: 1.5em;
+      }
+      paper-material {
+        padding: 10px;
+        overflow-x: auto;
+        overflow-y: auto;
+      }
     </style>
-    <rose-name-list
-      is-loading="[[isLoading]]"
-      items="[[params]]"
-      title="Parameters"
-      url-prefix="/param"
-    ></rose-name-list>
+    <ros-service id="set"
+      name="/rosapi/set_param"
+      on-fail="_handleError"
+      ros="{{ros}}"
+      service-type="rosapi/SetParam"
+    ></ros-service>
+
+    <paper-material>
+      <h1>
+        Parameters
+        <template is="dom-if" if="[[!isLoading]]">
+          ([[params.length]])
+        </template>
+      </h1>
+      <paper-button class="create" on-tap="_createParam">Create</paper-button><br />
+      <template is="dom-if" if="[[isLoading]]">
+        Loading...
+      </template>
+      <template is="dom-if" if="[[!isLoading]]">
+        <template is="dom-repeat" items="[[params]]">
+        <a href="{{_computeUrl('param', item)}}" />[[item]]</a><br />
+        </template>
+      </template>
+    </paper-material> 
+    <paper-dialog modal id="createDialog">
+      <h2>Create new parameter</h2>
+      <p>
+        Examples of parameters:
+        <ul>
+          <li>"string"</li>
+          <li>1234</li>
+          <li>1234.5</li>
+          <li>true</li>
+          <li>false</li>
+          <li>[1, 2, 3]</li>
+        </ul>
+      </p>
+      <paper-input label="Name" value="{{name}}"></paper-input>
+      <paper-input label="Value" value="{{value}}"></paper-input>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm on-tap="setParam">Set</paper-button>
+      </div>
+    </paper-dialog>
   </template>
 
   <script>
@@ -39,10 +103,34 @@
         var that = this;
         this.ros.getParams(function(params) {
           that.isLoading = false;
-          that.params = params.sort();
+          that.set('params', params.sort());
         });
       },
 
+      setParam: function() {
+        if (this.name && this.value) {
+          this.$.set.call({name: this.name, value: this.value});
+          this.update();
+        }
+      },
+
+      _computeUrl: function(urlPrefix, item) {
+        while (urlPrefix.endsWith('/')) {
+          urlPrefix = urlPrefix.slice(0, -1);
+        }
+        while (item.startsWith('/')) {
+          item = item.substring(1);
+        }
+        return urlPrefix + '/' + item;
+      },
+
+      _createParam: function() {
+        this.$.createDialog.open();
+      },
+
+      _handleError: function(e) {
+        console.error(e);
+      },
     });
   </script>
 </dom-module>
