@@ -54,7 +54,7 @@
       </template>
       <template is="dom-if" if="[[!isLoading]]">
         <template is="dom-repeat" items="[[params]]">
-        <a href="{{_computeUrl('param', item)}}" />[[item]]</a><br />
+        <a href="{{_computeUrl('#/param', item)}}" />[[item]]</a><br />
         </template>
       </template>
     </paper-material> 

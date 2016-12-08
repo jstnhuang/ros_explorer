@@ -47,7 +47,7 @@
       }
     </style>
     <style include="iron-flex"></style>
-    <app-location route="{{route}}"></app-location>
+    <app-location route="{{route}}" use-hash-as-path></app-location>
     <app-route
       data="{{routeData}}"
       pattern="/:page"
@@ -63,7 +63,7 @@
       ros="{{ros}}"
     ></ros-websocket>
 
-    <a href="/" hidden="[[!showBackButton]]">&larr; Back to dashboard</a>
+    <a href="#/" hidden="[[!showBackButton]]">&larr; Back to dashboard</a>
     <div id="urlInput" class="layout horizontal">
       <paper-input class="flex" label="Websocket URL" value="{{url}}"></paper-input>
       <paper-button on-tap="connect">Connect</paper-button>
@@ -119,6 +119,14 @@
           type: Boolean,
           value: false,
           computed: '_computeShowBackButton(routeData.page)',
+        },
+        routeData: {
+          type: Object,
+          value: function() {
+            return {
+              page: '',
+            };
+          }
         },
       },
 
