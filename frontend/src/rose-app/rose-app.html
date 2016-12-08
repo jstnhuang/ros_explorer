@@ -149,7 +149,7 @@
         this.$.dashboard.rosConnected();
         this.$.nodePage.rosConnected();
         this.$.topicPage.rosConnected();
-        //this.$.servicePage.rosConnected();
+        this.$.servicePage.rosConnected();
         //this.$.paramPage.rosConnected();
         var that = this;
         this.debounce('updateDisconnected', function() {that.$.disconnected.close}, 1000);
