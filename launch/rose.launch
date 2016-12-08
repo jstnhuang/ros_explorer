@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="rose" name="rose" type="rose" cwd="node" />
+</launch>
