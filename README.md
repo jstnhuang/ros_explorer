@@ -45,7 +45,7 @@ Install the Polymer CLI if you don't already have it:
 
 Download the frontend dependencies:
 - `cd frontend`
-- `bower update && npm install`
+- `bower update`
 
 Run a local development server:
 - `polymer serve`
