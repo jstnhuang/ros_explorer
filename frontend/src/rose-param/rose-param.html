@@ -1,4 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/ros-service/ros-service.html">
 
 <dom-module id="rose-param">
   <template>
@@ -6,8 +11,62 @@
       :host {
         display: block;
       }
+      paper-input {
+        max-width: 500px;
+      }
+      paper-button {
+        @apply(--paper-font-button);
+        background-color: #e0e0e0;
+        height: 30px;
+        bottom: -24px;
+        position: relative;
+      }
+      paper-button.delete {
+        background-color: #ffcdd2;
+        color: #f44336;
+      }
     </style>
+    <style include="iron-flex"></style>
+    <ros-service id="get"
+      name="/rosapi/get_param"
+      on-response="_handleGet"
+      on-fail="_handleError"
+      ros="{{ros}}"
+      service-type="rosapi/GetParam"
+    ></ros-service>
+    <ros-service id="set"
+      name="/rosapi/set_param"
+      on-response="_handleSet"
+      on-fail="_handleError"
+      ros="{{ros}}"
+      service-type="rosapi/SetParam"
+    ></ros-service>
+    <ros-service id="delete"
+      name="/rosapi/delete_param"
+      on-response="_handleDelete"
+      on-fail="_handleError"
+      ros="{{ros}}"
+      service-type="rosapi/DeleteParam"
+    ></ros-service>
+
     <h1>{{name}}</h1> 
+    <div class="layout horizontal wrap">
+      <paper-input label="Value" value="{{value}}"></paper-input>
+      <paper-button on-tap="updateParam">Update</paper-button>
+      <paper-button class="delete" on-tap="deleteParam">Delete</paper-button>
+    </div>
+    <p>
+      Examples of parameters:
+      <ul>
+        <li>"string"</li>
+        <li>1234</li>
+        <li>1234.5</li>
+        <li>true</li>
+        <li>false</li>
+        <li>[1, 2, 3]</li>
+      </ul>
+    </p>
+    <paper-toast text="Parameter updated." id="toast"></paper-toast>
   </template>
 
   <script>
@@ -16,6 +75,49 @@
 
       properties: {
         name: String,
+        isRosConnected: {
+          type: Boolean,
+          value: false
+        },
+        value: String, 
+      },
+
+      observers: [
+        'getValue(isRosConnected, name)',
+      ],
+
+      getValue: function(isRosConnected, name) {
+        if (this.isRosConnected && this.name) {
+          this.$.get.call({name: this.name});
+        }
+      },
+
+      rosConnected: function() {
+        this.isRosConnected = true;
+      },
+
+      deleteParam: function() {
+        this.$.delete.call({name: this.name});
+      },
+
+      updateParam: function() {
+        this.$.set.call({name: this.name, value: this.value});
+      },
+
+      _handleGet: function(evt) {
+        this.value = evt.detail.value;
+      },
+
+      _handleSet: function() {
+        this.$.toast.open();
+      },
+
+      _handleDelete: function() {
+        window.location = '/';
+      },
+
+      _handleError: function(e) {
+        console.error(e);
       },
     });
   </script>
