@@ -48,6 +48,7 @@
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
+    <appname>ROS Explorer</appname>
     <!-- Other tools can request additional information be placed here -->
 
   </export>
