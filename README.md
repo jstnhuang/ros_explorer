@@ -15,7 +15,7 @@ We recommend compiling the code as a catkin package just to get the ability to r
 cd ~/catkin_ws
 git clone https://github.com/jstnhuang/rose.git
 cd rose
-wget https://github.com/jstnhuang/rose/releases/download/v1.0/www.zip
+wget https://github.com/jstnhuang/rose/releases/download/v1.1/www.zip
 unzip www.zip
 catkin build
 ```
