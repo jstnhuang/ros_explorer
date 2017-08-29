@@ -1,4 +1,4 @@
 <launch>
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"></include>
-  <node pkg="rose" name="rose" type="rose" cwd="node" />
+  <node pkg="ros_explorer" name="ros_explorer" type="ros_explorer" cwd="node" />
 </launch>
