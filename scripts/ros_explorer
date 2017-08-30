@@ -1,5 +1,6 @@
 #!/bin/bash
 
 cd ../www;
+sleep 0.5
 xdg-open http://localhost:8595;
 python -m SimpleHTTPServer 8595 "../www";
