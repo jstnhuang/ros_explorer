@@ -20,7 +20,7 @@ We also provide two launch files for convenience.
 
 ## User notes
 - By default, the websocket URL is determined from the host the webpage is being served from (e.g., `localhost`, `robot.university.edu`).
-- You can scroll horizontally to view names that have been cut off but holding Shift while scrolling.
+- You can scroll horizontally to view names that have been cut off by holding Shift while scrolling.
 - Press Ctrl+F to search for a name.
 
 ## Developing
