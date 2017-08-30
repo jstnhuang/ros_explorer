@@ -18,14 +18,12 @@
         padding-left: 20px;
       }
     </style>
-    {{type}}<span hidden$="{{!_isArrayType(arraylen)}}">[]</span> {{name}}<br />
+    [[details.type]]<span hidden$="[[!_isArrayType(details.arraylen)]]">[{{_arrayLenStr(details.arraylen)}}]</span> [[name]]<br />
     <div class="children">
-      <template is="dom-repeat" items="{{childFields}}">
+      <template is="dom-repeat" items="[[childFields]]">
         <rose-msg
-          name="{{item.name}}"
-          type="{{item.type}}"
-          arraylen="{{item.arraylen}}"
-          typedefs="{{typedefs}}"
+          name="[[item.name]]"
+          details="[[item.details]]"
         ></rose-msg>
       </template>
     </div>
@@ -35,39 +33,45 @@
       is: 'rose-msg',
       
       properties: {
-        childFields: {
-          type: Array,
+        details: {
+          type: Object,
           value: function() {
-            return [];
-          },
+            // Example: {
+            //   type: "sensor_msgs/Image",
+            //   typedefs: [ ... ],
+            //   arraylen: -1
+            // }
+            return {
+              type: "",
+              typedefs: [],
+              arraylen: -1
+            };
+          }
         },
         name: String,
-        type: String,
-        arraylen: Number,
-        typedefs: {
-          type: Array,
-          value: function() {
-            return [];
-          },
-        },
       },
 
       observers: [
-        'update(type, typedefs.*)',
+        'update(details)',
       ],
 
-      update: function() {
-        if (this.type && this.typedefs.length) {
-          var currentType = this.getTypedef(this.typedefs, this.type);
+      update: function(details) {
+        var type = details.type;
+        var typedefs = details.typedefs;
+        if (type && typedefs && typedefs.length) {
+          this.set('childFields', []);
+          var currentType = this.getTypedef(typedefs, type);
           if (!currentType) {
             return;
           }
-          this.set('childFields', []);
           for (var i=0; i<currentType.fieldtypes.length; ++i) {
             this.push('childFields', {
               name: currentType.fieldnames[i],
-              type: currentType.fieldtypes[i],
-              arraylen: currentType.fieldarraylen[i]
+              details: {
+                type: currentType.fieldtypes[i],
+                typedefs: typedefs,
+                arraylen: currentType.fieldarraylen[i]
+              }
             });
           }
         }
@@ -87,6 +91,13 @@
 
       _isArrayType: function(arraylen) {
         return arraylen > -1;
+      },
+      _arrayLenStr: function(arraylen) {
+        if (arraylen > 0) {
+          return '' + arraylen;
+        } else {
+          return '';
+        }
       },
     });
   </script>

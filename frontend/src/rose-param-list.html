@@ -1,13 +1,13 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-styles/element-styles/paper-material-styles.html">
 <link rel="import" href="../bower_components/ros-service/ros-service.html">
 <link rel="import" href="rose-name-list.html">
 
 <dom-module id="rose-param-list">
   <template>
-    <style>
+    <style include="paper-material-styles">
       :host {
         display: block;
       }
@@ -28,7 +28,8 @@
       paper-dialog li {
         margin-left: 1.5em;
       }
-      paper-material {
+      .paper-material {
+        @apply(--paper-material-elevation-1);
         padding: 10px;
         overflow-x: auto;
         overflow-y: auto;
@@ -41,7 +42,7 @@
       service-type="rosapi/SetParam"
     ></ros-service>
 
-    <paper-material>
+    <div class="paper-material">
       <h1>
         Parameters
         <template is="dom-if" if="[[!isLoading]]">
@@ -57,7 +58,7 @@
         <a href="{{_computeUrl('#/param', item)}}" />[[item]]</a><br />
         </template>
       </template>
-    </paper-material> 
+    </div> 
     <paper-dialog modal id="createDialog">
       <h2>Create new parameter</h2>
       <p>

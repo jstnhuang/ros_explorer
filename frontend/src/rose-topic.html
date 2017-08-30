@@ -1,26 +1,27 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-styles/element-styles/paper-material-styles.html">
 <link rel="import" href="../bower_components/ros-service/ros-service.html">
 <link rel="import" href="rose-msg.html">
 
 <dom-module id="rose-topic">
   <template>
-    <style>
+    <style include="paper-material-styles">
       :host {
         display: block;
       }
-      paper-material {
+      .paper-material {
+        @apply(--paper-material-elevation-1);
         padding: 10px;
         overflow-x: auto;
         overflow-y: auto;
         margin-right: 10px;
       }
-      paper-material h1 {
+      .paper-material h1 {
         @apply(--paper-font-title);
         margin-top: 0;
       }
-      rose-name-list, paper-material {
+      rose-name-list, .paper-material {
         margin-bottom: 10px;
         min-width: 200px;
         max-width: 500px;
@@ -68,15 +69,13 @@
     ></ros-topic>
     <h1>{{name}}</h1> 
     <div class="layout horizontal wrap">
-      <paper-material>
+      <div class="paper-material">
         <h1>Type definition</h1>
         <rose-msg
           name=""
-          type="{{type.type}}"
-          arraylen="-1"
-          typedefs="{{typedefs}}"
+          details="[[details]]"
         ></rose-msg>
-      </paper-material>
+      </div>
       <rose-name-list class="flex"
         is-loading="[[_publishersLoading]]"
         items="[[publishers.publishers]]"
@@ -173,14 +172,22 @@
 
       _handleTypeResponse: function(evt) {
         this.msgType = evt.detail.type;
-        this.$.msgDetailService.call({type: this.msgType}); 
+        if (this.msgType) {
+          this.$.msgDetailService.call({type: this.msgType}); 
+        }
       },
 
-      _handleDetailError: function() {
+      _handleDetailError: function(e) {
+        console.error(e);
       },
 
       _handleDetailResponse: function(evt) {
-        this.typedefs = evt.detail.typedefs;
+        var details = {
+          arraylen: -1,
+          type: this.msgType,
+          typedefs: evt.detail.typedefs
+        };
+        this.set('details', details);
       },
 
       _update: function() {

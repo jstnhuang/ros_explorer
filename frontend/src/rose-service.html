@@ -1,15 +1,16 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-styles/element-styles/paper-material-styles.html">
 <link rel="import" href="../bower_components/ros-service/ros-service.html">
 
 <dom-module id="rose-service">
   <template>
-    <style>
+    <style include="paper-material-styles">
       :host {
         display: block;
       }
-      paper-material {
+      .paper-material {
+        @apply(--paper-material-elevation-1);
         padding: 10px;
         overflow-x: auto;
         overflow-y: auto;
@@ -17,31 +18,30 @@
         min-width: 200px;
         max-width: 500px;
       }
-      paper-material h1 {
+      .paper-material h1 {
         @apply(--paper-font-title);
         margin-top: 0;
       }
     </style>
     <style include="iron-flex"></style>
     <ros-service id="typeService"
-      last-response="{{type}}"
       name="/rosapi/service_type"
+      on-response="_handleTypeResponse"
       on-fail="_handleError"
       ros="{{ros}}"
       service-type="rosapi/ServiceType"
     ></ros-service>
     <ros-service id="requestDetailsService"
-      last-response="{{requestDetails}}"
       name="/rosapi/service_request_details"
-      on-response="handleRequestDetail"
       on-fail="_handleError"
+      on-response="_handleRequestDetails"
       ros="{{ros}}"
       service-type="rosapi/ServiceRequestDetails"
     ></ros-service>
     <ros-service id="responseDetailsService"
-      last-response="{{responseDetails}}"
       name="/rosapi/service_response_details"
       on-fail="_handleError"
+      on-response="_handleResponseDetails"
       ros="{{ros}}"
       service-type="rosapi/ServiceResponseDetails"
     ></ros-service>
@@ -55,28 +55,24 @@
 
     <h1>{{name}}</h1> 
     <p>
-      <strong>Type:</strong> {{type.type}}<br />
+      <strong>Type:</strong> {{type}}<br />
       <strong>Node:</strong> <a href="#/node{{node.node}}">{{node.node}}</a>
     </p>
     <div class="layout horizontal wrap">
-      <paper-material>
+      <div class="paper-material">
         <h1>Request definition</h1>
         <rose-msg
           name=""
-          type="{{type.type}}Request"
-          arraylen="-1"
-          typedefs="{{requestDetails.typedefs}}"
+          details="[[requestDetails]]"
         ></rose-msg>
-      </paper-material> 
-      <paper-material>
+      </div> 
+      <div class="paper-material">
         <h1>Response definition</h1>
         <rose-msg
           name=""
-          type="{{type.type}}Response"
-          arraylen="-1"
-          typedefs="{{responseDetails.typedefs}}"
+          details="[[responseDetails]]"
         ></rose-msg>
-      </paper-material> 
+      </div> 
     </div>
   </template>
 
@@ -90,24 +86,11 @@
           type: Boolean,
           value: false,
         },
-        requestDetails: {
-          type: Object,
-          value: function() {
-            return {};
-          }
-        },
-        responseDetails: {
-          type: Object,
-          value: function() {
-            return {};
-          }
-        },
-        type: String,
       },
 
       observers: [
-        '_getType(isRosConnected, name)',
-        '_getNode(isRosConnected, name)',
+        '_getType(name, isRosConnected)',
+        '_getNode(name, isRosConnected)',
         '_getRequestDetails(type)',
         '_getResponseDetails(type)',
       ],
@@ -116,31 +99,48 @@
         this.isRosConnected = true;
       },
 
-      handleRequestDetail: function(evt) {
-      },
-
-      _getType: function(name) {
-        if (this.name && this.isRosConnected) {
-          this.$.typeService.call({service: this.name});
+      _getType: function(name, isRosConnected) {
+        if (name && isRosConnected) {
+          this.$.typeService.call({service: name});
         }
       },
 
-      _getNode: function(name) {
-        if (this.name && this.isRosConnected) {
-          this.$.nodeService.call({service: this.name});
+      _handleTypeResponse: function(evt) {
+        this.type = evt.detail.type;
+      },
+
+      _getNode: function(name, isRosConnected) {
+        if (name && isRosConnected) {
+          this.$.nodeService.call({service: name});
         }
       },
 
       _getRequestDetails: function(type) {
-        if (this.type && this.type.type) {
-          this.$.requestDetailsService.call({type: this.type.type});
+        if (type) {
+          this.$.requestDetailsService.call({type: type});
         }
       },
 
+      _handleRequestDetails: function(evt) {
+        this.requestDetails = {
+          arraylen: -1,
+          typedefs: evt.detail.typedefs,
+          type: this.type + 'Request'
+        };
+      },
+
       _getResponseDetails: function(type) {
-        if (this.type && this.type.type) {
-          this.$.responseDetailsService.call({type: this.type.type});
+        if (type) {
+          this.$.responseDetailsService.call({type: type});
         }
+      },
+
+      _handleResponseDetails: function(evt) {
+        this.responseDetails = {
+          arraylen: -1,
+          typedefs: evt.detail.typedefs,
+          type: this.type + 'Response'
+        };
       },
 
       _handleError: function(e) {

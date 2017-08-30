@@ -1,23 +1,21 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-styles/element-styles/paper-material-styles.html">
 
 <dom-module id="rose-name-list">
   <template>
-    <style>
+    <style include="paper-material-styles">
       :host {
         display: block;
+        @apply(--paper-material-elevation-1);
+        padding: 10px;
+        overflow-x: auto;
+        overflow-y: auto;
       }
       h1 {
         @apply(--paper-font-title);
         margin-top: 0;
       }
-      paper-material {
-        padding: 10px;
-        overflow-x: auto;
-        overflow-y: auto;
-      }
     </style>
-    <paper-material>
       <h1>
         [[title]]
         <template is="dom-if" if="[[!isLoading]]">
@@ -32,7 +30,6 @@
         <a href="{{_computeUrl(urlPrefix, item)}}" />[[item]]</a><br />
         </template>
       </template>
-    </paper-material> 
   </template>
 
   <script>
