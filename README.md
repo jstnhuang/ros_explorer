@@ -5,6 +5,8 @@ A visual, web-based interface for examining the ROS graph.
 - See topic and service types.
 - Add/edit/delete parameters.
 
+Tested on Indigo, but likely works with newer ROS distros.
+
 ![ROS Explorer Dashboard screenshot](https://cloud.githubusercontent.com/assets/1175286/20996188/9da3cb16-bcb0-11e6-899b-4d46d0c2b01e.png)
 
 ## Running
