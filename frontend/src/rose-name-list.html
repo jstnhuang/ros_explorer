@@ -16,20 +16,20 @@
         margin-top: 0;
       }
     </style>
-      <h1>
-        [[title]]
-        <template is="dom-if" if="[[!isLoading]]">
-          ([[items.length]])
-        </template>
-      </h1>
-      <template is="dom-if" if="[[isLoading]]">
-        Loading...
+    <h1>
+      [[title]]
+      <span hidden$="[[isLoading]]">
+        ([[items.length]])
+      </span>
+    </h1>
+    <div hidden$="[[!isLoading]]">
+      Loading...
+    </div>
+    <div hidden$="[[isLoading]]">
+      <template is="dom-repeat" items="[[items]]">
+      <a href="{{_computeUrl(urlPrefix, item)}}" />[[item]]</a><br />
       </template>
-      <template is="dom-if" if="[[!isLoading]]">
-        <template is="dom-repeat" items="[[items]]">
-        <a href="{{_computeUrl(urlPrefix, item)}}" />[[item]]</a><br />
-        </template>
-      </template>
+    </div>
   </template>
 
   <script>

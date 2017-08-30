@@ -45,19 +45,19 @@
     <div class="paper-material">
       <h1>
         Parameters
-        <template is="dom-if" if="[[!isLoading]]">
+        <span hidden$="[[isLoading]]">
           ([[params.length]])
-        </template>
+        </span>
       </h1>
       <paper-button class="create" on-tap="_createParam">Create</paper-button><br />
-      <template is="dom-if" if="[[isLoading]]">
+      <div hidden$="[[!isLoading]]">
         Loading...
-      </template>
-      <template is="dom-if" if="[[!isLoading]]">
+      </div>
+      <div hidden$="[[isLoading]]">
         <template is="dom-repeat" items="[[params]]">
-        <a href="{{_computeUrl('#/param', item)}}" />[[item]]</a><br />
+          <a href="{{_computeUrl('#/param', item)}}" />[[item]]</a><br />
         </template>
-      </template>
+      </div>
     </div> 
     <paper-dialog modal id="createDialog">
       <h2>Create new parameter</h2>
