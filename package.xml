@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>ros_explorer</name>
-  <version>0.0.0</version>
+  <version>0.1.0</version>
   <description>A web interface for exploring the ROS graph</description>
   <maintainer email="jstn@cs.washington.edu">Justin Huang</maintainer>
   <license>BSD</license>
